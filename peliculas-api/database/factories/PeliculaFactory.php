@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Categoria;
 use App\Models\Pelicula;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -35,6 +36,7 @@ class PeliculaFactory extends Factory
             'fecha_estreno' => $this->faker->date(), // Fecha de estreno
             'generos' => json_encode($this->faker->words(3)), // Géneros en formato JSON
             'url_poster' => $this->faker->imageUrl(), // URL de un póster falso
+            'categoria_id' => Categoria::factory(),
         ];
     }
 }

@@ -35,8 +35,7 @@ class PeliculaController extends Controller
      */
     public function show($id)
     {
-        // Busca la película por ID y la retorna
-        $pelicula = Pelicula::findOrFail($id);
+        $pelicula = Pelicula::with('categoria')->findOrFail($id);
         return response()->json($pelicula);
     }
 

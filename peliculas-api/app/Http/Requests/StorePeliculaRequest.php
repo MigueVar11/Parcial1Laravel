@@ -11,7 +11,7 @@ class StorePeliculaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; 
+        return true;
     }
 
     /**
@@ -22,13 +22,14 @@ class StorePeliculaRequest extends FormRequest
         return [
             'titulo' => 'required|string|max:255',
             'descripcion' => 'required|string',
-            'año' => 'required|integer|min:1900|max:' . date('Y'),
+            'año' => 'required|integer',
             'director' => 'required|string|max:255',
             'calificacion' => 'required|numeric|between:0,10',
             'disponible' => 'required|boolean',
             'fecha_estreno' => 'required|date',
             'generos' => 'required|json',
-            'url_poster' => 'required|url',
+            'url_poster' => 'required|string|max:255',
+            'categoria_id' => 'required|exists:categorias,id', // Validar clave foránea
         ];
     }
 

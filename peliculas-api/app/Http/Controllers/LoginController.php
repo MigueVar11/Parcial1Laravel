@@ -1,28 +1,44 @@
 <?php
-use Illuminate\Http\Request;
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest; // Ensure this class exists in the specified namespace
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    public function login(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        // La validación ya se realiza en el RegisterRequest, así que podemos crear el usuario directamente
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $token = $request->user()->createToken('auth_token')->plainTextToken;
-            return response()->json(['token' => $token]);
-        }
+        // Opcional: Enviar un correo electrónico de verificación
+        // Mail::to($user->email)->send(new WelcomeEmail($user));
 
-        return response()->json(['message' => 'Credenciales incorrectas'], 401);
+        return response()->json([
+            'message' => 'Usuario registrado exitosamente.'
+        ], 201);
     }
 
-    public function logout(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logout exitoso']);
+        if (Auth::attempt($request->only(['email', 'password']))) {
+            return response()->json([
+                'token' => $request->user()->createToken($request->name)->plainTextToken,
+                'message' => 'Success',
+                'status' => true
+            ]);
+        }
+        return response()->json([
+            'message' => 'Unauthorized',
+            'status' => false
+        ], Response::HTTP_UNAUTHORIZED);
     }
 }
